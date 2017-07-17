@@ -6,32 +6,32 @@
 
 class initLua
 {
-	private:	// Variabler
+	private:
 		GameEngine *gameEngine;
 		GameEngine_Main *main;
 		lua_State *lpLua;
 
-	public:		// Funktioner
+	public:	
 		initLua();
 		~initLua();
 	
-		void mainLoop();						// Går till GameEngine_Main::Tick
-		int callLuaFile(std::string fileName);	// Anropa luafil.
+		void mainLoop();
+		int callLuaFile(std::string fileName);
 
-	private:	// Funktioner
-		static void OpenLuaLibs(lua_State *l);	// Öppna Lua-biblioteken i "lualibs".
-		int PrintLuaError();					// Skriv ut lua errors.
+	private:
+		static void OpenLuaLibs(lua_State *l);
+		int PrintLuaError();
 
 };
 
-extern "C" //<--- Behövs för att få lua att funka med C++
+extern "C"
 {
 	#include <lua.h>
 	#include <lauxlib.h>
 	#include <lualib.h>
 }
 
-// Alla bibliotek som ska användas med Lua
+// All the libraries which are to be used with Lua
 static const luaL_reg lualibs[] =
 {
 	{ "base", luaopen_base },
