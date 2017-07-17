@@ -13,7 +13,7 @@ GameEngine_Main::~GameEngine_Main()
 
 bool GameEngine_Main::Tick(lua_State *l)
 {
-	// Själva main-loopen. Programmet har kommit från void initLua::mainLoop()
+	// The main loop. initLua::mainLoop() called this function
 
 	double timeout = double(time(0));
 	while (this->timer->first < timeout)
@@ -26,30 +26,30 @@ bool GameEngine_Main::Tick(lua_State *l)
 
 int GameEngine_Main::runGameLoop(lua_State *l, Timer &timer)
 {
-	// Kalla på GameLoop() i lua
+	// Call for GameLoop() in Lua.
 	lua_rawgeti(l, LUA_REGISTRYINDEX, timer.getLuaID());
 
-	// Kolla om referensindexet är till en funktion
+	// Check if the reference index is to a function.
 	if (!lua_isfunction(l, -1))
 		luaL_error(l, "callback is not a function!");
 
 	if (lua_pcall(l, 0, LUA_MULTRET, 0) != 0)
 		luaL_error(l, "error running callback: %s", lua_tostring(l, -1));
 
-	// Antalet returvärden
+	// The number of return values.
 	int retvals = lua_gettop(l);
 
-	// Kolla om antalet returvärd en är mer än 0 och är nummer
+	// Check if the number of return values if bigger than 0 and is a number.
 	if (retvals > 0 && lua_isnumber(l, 1))
 	{
 		int retrigger = lua_tointeger(l, 1);
 
-		// Ställ om timern till 0
+		// Set the timer to 0
 		if (retrigger != 0)
 			this->setTimer(timer.getTime(), timer.getLuaID());
 	}
 
-	// Poppa antalet returvärden
+	// Pop the number of return values from the lua stack
 	lua_pop(l, retvals);
 	return 0;
 }
