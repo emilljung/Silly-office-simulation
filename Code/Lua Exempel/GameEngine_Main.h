@@ -21,10 +21,10 @@ public:
 	GameEngine_Main();
 	~GameEngine_Main();
 
-	bool Tick(lua_State *l);	// Main-loopen
+	bool Tick(lua_State *l);
 
 	void setLoopActive(bool loopActive);
-	void setTimer(double t, int lua_index);	// För runGameLoop & lua_setMainLoop
+	void setTimer(double t, int lua_index);	// For runGameLoop & lua_setMainLoop
 };
 
 extern "C"
