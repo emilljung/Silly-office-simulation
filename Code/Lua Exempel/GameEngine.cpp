@@ -2,7 +2,7 @@
 
 GameEngine *g_GameEngine = NULL;
 
-// { <Funktionsnamnet i Lua>, <vilken funktion i C++ som kopplas till funktionsnamnet i Lua> }{ "Print", GameEngine_Print },
+// { <The function name in Lua>, <The function in C++ which connects to the function in Lua> }{ "Print", GameEngine_Print },
 static const luaL_reg gameengine_functions[] =
 {
 	{ NULL, NULL }
@@ -34,45 +34,44 @@ void GameEngine::Init(std::string gameEngineName, std::string gameEngineVersion)
 
 void GameEngine::InitScriptInterface(lua_State *l)
 {
-	// Registrera funktionerna i gameengine_functions till GameEngine i Lua.
+	// Register the functions in gameengine_functions to GameEngine in Lua
 	luaL_register(l, "GameEngine", gameengine_functions);
-	lua_settop(l, 0); // Återställ stacken, det kan hända att vi får skräpvärden ifall detta inte görs
+	lua_settop(l, 0); // Reset the stack. 
 	
-	// Skapa en globalvariabel i Lua som heter GameEngine
+	// Create a global variable in Lua named GameEngine.
 	lua_getglobal(l, "GameEngine");
 
-	// Registrera följande GameEngine-funktioner till variabeln GameEngine i Lua
+	// Register the following functions to the variable GameEngine in Lua.
 	this->RegisterFunction(l, "PrintNameVr", GameEngine::lua_printNameVr);
 	this->RegisterFunction(l, "Print", GameEngine::lua_print);
 	this->RegisterFunction(l, "SetMainLoop", GameEngine::lua_setMainLoop);
 	this->RegisterFunction(l, "GetInput", GameEngine::lua_getInput);
 	this->RegisterFunction(l, "SetLoopActive", GameEngine::lua_setLoopActive);
 
-	lua_settop(l, 0); // Återställ stacken
+	lua_settop(l, 0);
 }
 
 int GameEngine::RegisterFunction(lua_State *l, std::string name, lua_function function)
 {
-	lua_pushstring(l, name.c_str());		// Vad funktionen ska heta i Lua.
-	lua_pushlightuserdata(l, (void*)this);	// Pekare till GameEngine-klassen.
-	lua_pushcclosure(l, function, 1);		// Funktionen från C++.
-	lua_settable(l, -3);					// Osäker på exakt varför det ska vara -3.
+	lua_pushstring(l, name.c_str());		// Name of the function in Lua.
+	lua_pushlightuserdata(l, (void*)this);		// Pointer to the GameEngine class.
+	lua_pushcclosure(l, function, 1);		// The function from C++.
+	lua_settable(l, -3);
 	return 0;
 }
 
-// Dessa funktioner definierar funktionerna i Lua, t.ex GameEngine.Print("Hej")
+// These C++ functions defines the functions in Lua, for instance GameEngine.Print("Hello")
 //----------------------------------------------------------------------------------------------
 int GameEngine::lua_printNameVr(lua_State *l)
 {
 	std::string out;
 	int args = lua_gettop(l);
 
-	// Kolla om antalet argument är 0
+	// Check if the argument is 0
 	if (args != 0) luaL_error(l, "PrintNameVr needs no arguments");
 
-	// out innehåller nu argumenten som skickades till GameEngine.Print(...) i lua
 	std::cout << g_GameEngine->GetName() + ": " + g_GameEngine->GetVersion() << "\n";
-	return 0; // Antal return värden
+	return 0; // Zero return values to Lua
 }
 
 int GameEngine::lua_print(lua_State *l)
@@ -81,29 +80,28 @@ int GameEngine::lua_print(lua_State *l)
 	int args = lua_gettop(l);
 
 	for (int i = 1; i <= args; ++i)
-		out += lua_tostring(l, i);	// Själva värdet i argumentet/argumenten
+		out += lua_tostring(l, i);	// The arugment from Print(x) in Lua
 
-	// out innehåller nu argumenten som skickades till GameEngine.Print(...) i lua
+	// The variable out now contains the arguments which were sent to GameEngine.Print(...) in Lua
 	std::cout << out << std::endl;
-	return 0; // Antal return värden
+	return 0;
 }
 
 int GameEngine::lua_setMainLoop(lua_State *l)
 {
 	int argc = lua_gettop(l);
 
-	// Kolla om antalet argument är 2
 	if(argc != 2) luaL_error(l, "notify needs two arguments");
 
-	// Parameter nr1 måste vara ett nummer
+	// The first parameter must be a number
 	if(!lua_isnumber(l, 1))
 		luaL_error(l, "first parameter is not a number");
 
-	// Parameter nr2 måste vara en funktion
+	// The second parameter must be a function
 	if(!lua_isfunction(l, 2))
 		luaL_error(l, "second parameter is not a function");
 	
-	int refID = luaL_ref(l, LUA_REGISTRYINDEX); // refID är ID:t till GameLoop() i lua
+	int refID = luaL_ref(l, LUA_REGISTRYINDEX); // refID is the ID to GameLoop() in Lua
 		
 	g_GameEngine->setTimer(lua_tonumber(l, 1), refID);
 
@@ -112,20 +110,17 @@ int GameEngine::lua_setMainLoop(lua_State *l)
 
 int GameEngine::lua_getInput(lua_State *l)
 {
-	// Skicka inmatningvärdet (true/false) till lua
-
 	int args = lua_gettop(l);
 
-	// Kolla så att antalet argument till GameEngine.GetInput(...) är 1
 	if (args != 0)
 		luaL_error(l, "GetInput takes no argument: %i given", lua_gettop(l));
 	
+	// Return false to Lua if the Q key is pressed
 	if (GetAsyncKeyState('Q'))
 		lua_pushboolean(l, false);
 	else
 		lua_pushboolean(l, true);
 
-	// Antal argument att returnera (tror jag)
 	return 1;
 }
 
@@ -133,15 +128,14 @@ int GameEngine::lua_setLoopActive(lua_State *l)
 {
 	int args = lua_gettop(l);
 
-	// Kolla om antalet argument till GameEngine.SetLoopActive(...) i lua är 1
 	if (args != 1)
 		luaL_error(l, "SetLoopActive takes 1 argument: %i was given", lua_gettop(l));
 
-	// Kolla om det första argumentet är en void-pekare
+	// Check if the first argument is a void pointer
 	if (!lua_isboolean(l, 1))
 		luaL_error(l, "SetLoopActive wants a boolean");
 
-	// Om värdet från Lua är skilt från 0 så sätts loopActive till true, annars false.
+	// If the value from Lua isn't 0, then loopActive is set to true, otherwise false.
 	g_GameEngine->setLoopActive(lua_toboolean(l, 1) != 0);
 
 	return 0;
@@ -150,7 +144,7 @@ int GameEngine::lua_setLoopActive(lua_State *l)
 
 void GameEngine::setTimer(double t, int lua_index)
 {
-	// Sätt ett nytt värde till multimap<double, Timer>
+	// New value to multimap<double, Timer>
 	this->main->setTimer(t, lua_index);
 }
 
