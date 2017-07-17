@@ -1,4 +1,5 @@
 function newRager(baseClass, rage)
+    -- Print this when a Rager is created
     print(baseClass:GetName() .. ": 'Phu, I'm actually quite calm today!'")
     
     local rager = { base = baseClass,
@@ -11,21 +12,21 @@ function newRager(baseClass, rage)
     function rager:update()
         if self.base:GetRoom():GetRoomName() == "Office2" then
             if rager:inOffice() then
-                rager:getParent():MoveTo(self.base:GetRoomTable()[4]) -- Till Corridor
+                rager:getParent():MoveTo(self.base:GetRoomTable()[4]) -- To Corridor
             end
         else            
             if rager:inCorridor() then
-                rager:getParent():MoveTo(self.base:GetRoomTable()[2]) -- Till Office2
+                rager:getParent():MoveTo(self.base:GetRoomTable()[2]) -- To Office2
             end         
         end
     end
     
     function rager:inOffice()
-        move = false    -- Stanna i Office2
+        move = false    -- Stay in Office2
         val = math.random(-1,1)
         
         if val == 1 then
-            -- Blir mer förbannad
+            -- Rager is getting more angry
             self.rageMeter = self.rageMeter + 1
             if self.rageMeter == 1 then
                 print(rager:getParent():GetName() .. ": 'This is more difficult than I expected...' ")
@@ -33,10 +34,10 @@ function newRager(baseClass, rage)
                 print(rager:getParent():GetName() .. ": 'Grrr...' ")
             else
                 print(rager:getParent():GetName() .. ": 'Fuck this shit!' ")
-                move = true   -- Gå till Corridor
+                move = true   -- Go to Corridor
             end
         elseif val == -1 then
-            -- Blir lugnare
+            -- Rager is getting calmer
             if self.rageMeter > 0 then
                 self.rageMeter = self.rageMeter - 1
                 if self.rageMeter == 2 then
@@ -47,11 +48,11 @@ function newRager(baseClass, rage)
                     print(rager:getParent():GetName() .. ": 'It works! Good thing I'm so calm :)' ")
             end
             else
-                -- Försöker bli lugnare än 0
+                -- Tries to get more calm than 0.
                 print(rager:getParent():GetName() .. ": 'I'm so calm I could fall asleep!' ")
             end
         else
-            -- Oförändrad ilska, val == 0
+            -- Unchanged anger, val == 0
             print(rager:getParent():GetName() .. ": 'This is so annoying...' ")
         end
         
@@ -59,14 +60,15 @@ function newRager(baseClass, rage)
     end
     
     function rager:inCorridor()
-        move = false  -- Stanna kvar i Corridor
+        move = false  -- Stay in Corridor
         
+        -- Calm down step wise
         if self.rageMeter > 0 then
             self.rageMeter = self.rageMeter - 1
             print(rager:getParent():GetName() .. ": 'Calm down " .. rager:getParent():GetName() .. "... Calm down...' ")
         else
             print(rager:getParent():GetName() .. ": 'Time to go back to my office!' ")
-            move = true -- Gå till Office2        
+            move = true -- Go to Office2        
         end
         
         return move
