@@ -22,7 +22,7 @@ private:
 private:
 	int RegisterFunction(lua_State *l, std::string name, lua_function function);
 
-	// Funktioner som registreras till lua
+	// Functions to register to Lua
 	static int lua_printNameVr(lua_State *l);
 	static int lua_print(lua_State *l);
 	static int lua_setMainLoop(lua_State *l);
