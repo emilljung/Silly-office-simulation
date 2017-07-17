@@ -23,9 +23,9 @@ for i=1, 3, 1 do
     employee[i]:getParent():SetRoomTable(rooms)
 end
 
-employee[1]:setEmployeeTable(employee)  -- Så att Leader kan hålla koll på Rager & CoffeeConsumer
+employee[1]:setEmployeeTable(employee)  -- So that Leader can keep an eye on Rager & CoffeeConsumer
 
-math.randomseed(os.time()) -- För att Rager ska kunna använda math.random(x,y)
+math.randomseed(os.time()) -- So that Rager can use math.random(x,y)
 
 
 function GameLoop()	
@@ -39,5 +39,5 @@ function GameLoop()
 	return 1
 end
 
---(<loop-tid i sec>, <funktion som ska upprepas>)
+-- (<Loop time in sec>, <The function to be repeated>)
 GameEngine.SetMainLoop(0.5, GameLoop)
