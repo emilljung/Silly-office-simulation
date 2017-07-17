@@ -1,4 +1,5 @@
 function newCoffeeConsumer(baseClass, nrOfCoffee)
+    -- Print this when a CoffeeConsumer is created
     print(baseClass:GetName() .. ": 'Yum! " .. nrOfCoffee .. " filled coffee cups are here :)'")
 
     local cc = {  coffee = nrOfCoffee,
