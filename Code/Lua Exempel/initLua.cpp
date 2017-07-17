@@ -2,14 +2,14 @@
 
 initLua::initLua()
 {
-	this->lpLua = lua_open(); // Öppna Lua
-	OpenLuaLibs(this->lpLua); // Ladda in lua-biblioteken
+	this->lpLua = lua_open(); // Open Lua
+	OpenLuaLibs(this->lpLua); // Load the lua libraries
 
 	this->main = new GameEngine_Main();
 
 	this->gameEngine = new GameEngine(this->main);
 	this->gameEngine->Init("BTH_ENGINE", "Emil Ljung Edition");
-	this->gameEngine->InitScriptInterface(this->lpLua);	// Registrera funktionerna i gameengine_functions till Lua
+	this->gameEngine->InitScriptInterface(this->lpLua); // Register the functions in gameengine_functions to Lua
 }
 
 initLua::~initLua()
@@ -17,7 +17,6 @@ initLua::~initLua()
 	delete this->main;
 	delete this->gameEngine;
 
-	// Rensa minnet innan programmet stängs av
 	lua_close(this->lpLua);
 }
 
@@ -31,7 +30,7 @@ void initLua::mainLoop()
 
 void initLua::OpenLuaLibs(lua_State *l)
 {
-	// Öppna Lua-biblioteken i "lualibs".
+	// Open the lua libraries in "lualibs".
 
 	const luaL_reg *lpLib;
 
@@ -45,17 +44,17 @@ void initLua::OpenLuaLibs(lua_State *l)
 
 int initLua::PrintLuaError()
 {
-	// Skriv ut lua errors.
+	// Print lua errors.
 
 	std::cout << "Lua error message:" << std::endl;
 	std::cout << lua_tostring(this->lpLua, -1) << "\n\n";
-	lua_pop(this->lpLua, 1); //Poppa bort error meddelandet från stacken
+	lua_pop(this->lpLua, 1); // Pop the error message from the lua stack.
 	return 1;
 }
 
 int initLua::callLuaFile(std::string fileName)
 {
-	// Anropa luafil.
+	// Open a lua file.
 
 	int rv = luaL_dofile(this->lpLua, fileName.c_str()), value = 0;
 	if (rv != 0)
