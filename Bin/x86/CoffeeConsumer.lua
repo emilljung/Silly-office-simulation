@@ -26,25 +26,24 @@ function newCoffeeConsumer(baseClass, nrOfCoffee)
     function cc:update()
         if self.base:GetRoom():GetRoomName() == "Office3" then
             if cc:inOffice() then
-                cc:getParent():MoveTo(self.base:GetRoomTable()[4]) -- Till Corridor
+                cc:getParent():MoveTo(self.base:GetRoomTable()[4]) -- To Corridor
             end
         elseif self.base:GetRoom():GetRoomName() == "Corridor" then
             if cc:inCorridor() then
-                cc:getParent():MoveTo(self.base:GetRoomTable()[3]) -- Till Office3
+                cc:getParent():MoveTo(self.base:GetRoomTable()[3]) -- To Office3
             else
-                cc:getParent():MoveTo(self.base:GetRoomTable()[5]) -- Till CoffeeRoom
+                cc:getParent():MoveTo(self.base:GetRoomTable()[5]) -- To CoffeeRoom
             end
         else
             if cc:inCoffeeRoom() then
-                cc:getParent():MoveTo(self.base:GetRoomTable()[4]) -- Till Corridor
+                cc:getParent():MoveTo(self.base:GetRoomTable()[4]) -- To Corridor
             end          
         end
     end
     
     function cc:inOffice()
-        move = false -- Stanna kvar i Office3 och drick kaffe
+        move = false -- Stay in Office3 and drink coffee
         
-        -- if self.coffee != 0
         if self.coffee ~= 0 then
             cc:drink()
         else
@@ -56,22 +55,22 @@ function newCoffeeConsumer(baseClass, nrOfCoffee)
     end
     
     function cc:inCorridor()
-        move = false -- Gå till CoffeeRoom
+        move = false -- Go to CoffeeRoom
         
         if self.coffee ~= 0 then
-            move = true --Gå till Office3
+            move = true -- Go to Office3
         end
         
         return move
     end
     
     function cc:inCoffeeRoom()
-        move = false -- Stanna kvar i CoffeeRoom och fyll koppar med kaffe
+        move = false -- Stay in CoffeeRoom and refill coffee cups
         if self.coffee < 3 then
             cc:fill()
         else
             print(cc:getParent():GetName() .. ": 'The Coffee cups are filled! Time to go back'")
-            move = true -- Gå till Corridor
+            move = true -- Go to Corridor
         end
         return move
     end
